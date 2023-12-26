@@ -16,11 +16,11 @@ async def get_server_status():
     return {"detail": "The server is working fine."}
 
 @app.post("/crop", response_class=StreamingResponse)
-async def crop_image(file: UploadFile, blur_intensity: int = 11):
+async def crop_image(file: UploadFile, intensity: int = 11):
     if (file.content_type not in ["image/jpeg", "image/png"]):
         raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
                             "Only images in the JPG or PNG format are accepted.")
-    cropped = crop(await file.read(), blur_intensity)
+    cropped = crop(await file.read(), intensity)
     def file_iter():
         yield cropped
     return StreamingResponse(file_iter(), media_type="image/jpeg")
