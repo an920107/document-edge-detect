@@ -3,7 +3,7 @@ import numpy as np
 import imutils.contours as ct
 
 
-def crop(binary: bytes, blur_intensity: int = 11) -> bytes:
+def crop(binary: bytes, intensity: int = 11) -> bytes:
     # 讀檔
     image = cv2.imdecode(np.fromstring(binary, np.uint8), cv2.IMREAD_COLOR)
 
@@ -11,14 +11,15 @@ def crop(binary: bytes, blur_intensity: int = 11) -> bytes:
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     # 高斯模糊
-    blur = cv2.GaussianBlur(gray, (blur_intensity, blur_intensity), 0)
+    blur = cv2.GaussianBlur(gray, (intensity, intensity), 0)
 
-    # Opening
-    kernel = np.ones((15, 15), np.uint8)
+    # Opening & Closing
+    kernel = np.ones((intensity, intensity), np.uint8)
     opening = cv2.morphologyEx(blur, cv2.MORPH_OPEN, kernel)
+    closing = cv2.morphologyEx(opening, cv2.MORPH_OPEN, kernel)
 
     # Canny
-    edged = cv2.Canny(opening, 30, 70)
+    edged = cv2.Canny(closing, 30, 70)
 
     # 尋找輪廓
     contours, _ = cv2.findContours(edged.copy(),
