@@ -16,7 +16,7 @@ def crop(binary: bytes, intensity: int = 11) -> bytes:
     # Opening & Closing
     kernel = np.ones((intensity, intensity), np.uint8)
     opening = cv2.morphologyEx(blur, cv2.MORPH_OPEN, kernel)
-    closing = cv2.morphologyEx(opening, cv2.MORPH_OPEN, kernel)
+    closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel)
 
     # Canny
     edged = cv2.Canny(closing, 30, 70)
